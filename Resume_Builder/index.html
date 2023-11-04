@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resume Builder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+    
+body {
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+#generateBtn {
+  background: linear-gradient(45deg, #ff6600, #ff9933);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease-in-out;
+}
+#downloadBtn{
+  background: linear-gradient(45deg, #ff6600, #ff9933);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease-in-out;
+}
+/* Button Hover Styles */
+#generateBtn:hover {
+  background: linear-gradient(45deg, #ff3300, #ff6600);
+}
+#downloadBtn:hover{
+  background: linear-gradient(45deg, #ff3300, #ff6600);
+
+}
+
+/* Preview Section Styles */
+#preview {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #000;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Resume Builder</a>
+              </li>
+            
+            </ul>
+        </div>
+        
+        </div>
+      </nav>
+      
+<div class="container mt-3">
+
+    <div class="card">
+        <div class="card-header">
+            Personal Information
+        </div>
+        <div class="card-body">
+            <form id="resumeForm">
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="johndoe@example.com" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone"  name="phno"placeholder="123-456-7890" required>
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="address" name="addrs" placeholder="123 Main St, City, State" required>
+                </div>
+                <div class="mb-3">
+                    <label for="education" class="form-label">Education</label>
+                    <textarea class="form-control" id="education" rows="3" name="education" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="experience" class="form-label">Work Experience</label>
+                    <textarea class="form-control" id="experience" rows="3"  name="experience"required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="skills" class="form-label">Skills</label>
+                    <input type="text" class="form-control" id="skills" name="skills" placeholder="e.g., JavaScript, HTML, CSS" required>
+                </div>
+                <div class="mb-3">
+                    <label for="languages" class="form-label">Languages</label>
+                    <input type="text" class="form-control" id="languages" name="languages" placeholder="e.g., English, Spanish, French" required>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <button id="generateBtn" class="btn btn-primary m-2">Generate Resume</button>
+                  <button id="downloadBtn" class="btn btn-primary m-2">Download Resume</button>
+              </div>     
+            </form>
+            <h2 class="mt-4">Preview:</h2>
+            <div id="preview" class="border p-3 ">
+        </div>
+    </div>
+</div>
+          
+<script>
+ 
+  const resumeForm = document.getElementById('resumeForm');
+  const preview = document.getElementById('preview');
+  const generateBtn = document.getElementById('generateBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const alertBS = document.getElementById('alert')
+ 
+  resumeForm.addEventListener('input', () => {
+      updatePreview();
+  });
+  
+
+  function updatePreview() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+      const education = document.getElementById('education').value;
+      const experience = document.getElementById('experience').value;
+      const skills = document.getElementById('skills').value;
+      const languages = document.getElementById('languages').value;
+      
+      const resumeHTML = `
+          <h3>${name}</h3>
+          <p>Email: ${email}</p>
+          <p>Phone Number: ${phone}</p>
+          <p>Address: ${address}</p>
+          <h4>Education:</h4>
+          <p>${education}</p>
+          <h4>Work Experience:</h4>
+          <p>${experience}</p>
+          <h4>Skills:</h4>
+          <p>${skills}</p>
+          <h4>Languages:</h4>
+          <p>${languages}</p>
+      `;
+      
+      preview.innerHTML = resumeHTML;
+  }
+  
+
+  generateBtn.addEventListener('click', () => {
+      const resumeHTML = preview.innerHTML;
+      const newWindow = window.open();
+      newWindow.document.open();
+      newWindow.document.write(resumeHTML);
+      newWindow.document.close();
+  });
+
+
+  downloadBtn.addEventListener('click', () => {
+  const resumeHTML = preview.innerHTML;
+
+  const pdfContent = {
+      content: [
+          {
+              text: 'Resume',
+              style: 'header',
+          },
+          {
+              text: 'Name: ' + document.getElementById('name').value,
+              margin: [0, 10],
+          },
+          {
+              text: 'Email: ' + document.getElementById('email').value,
+              margin: [0, 10],
+          },
+          {
+              text: 'Phone Number: ' + document.getElementById('phone').value,
+              margin: [0, 10],
+          },
+          {
+              text: 'Address: ' + document.getElementById('address').value,
+              margin: [0, 10],
+          },
+          {
+              text: 'Education:',
+              style: 'subheader',
+              margin: [0, 10],
+          },
+          {
+              text: document.getElementById('education').value,
+              margin: [0, 10],
+          },
+          {
+              text: 'Work Experience:',
+              style: 'subheader',
+              margin: [0, 10],
+          },
+          {
+              text: document.getElementById('experience').value,
+              margin: [0, 10],
+          },
+          {
+              text: 'Skills:',
+              style: 'subheader',
+              margin: [0, 10],
+          },
+          {
+              text: document.getElementById('skills').value,
+              margin: [0, 10],
+          },
+          {
+              text: 'Languages:',
+              style: 'subheader',
+              margin: [0, 10],
+          },
+          {
+              text: document.getElementById('languages').value,
+              margin: [0, 10],
+          },
+      ],
+      styles: {
+          header: {
+              fontSize: 18,
+              bold: true,
+              alignment: 'center',
+          },
+          subheader: {
+              fontSize: 14,
+              bold: true,
+              margin: [0, 5],
+          },
+      },
+  };
+
+  const pdfDoc = pdfMake.createPdf(pdfContent);
+
+
+  pdfDoc.download('resume.pdf');
+
+
+});
+
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  </body>
+</html>
